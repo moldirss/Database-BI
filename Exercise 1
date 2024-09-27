@@ -1,3 +1,92 @@
+CREATE TABLE sales (
+    product_id INT,
+    date DATE,
+    revenue DECIMAL(10, 2)
+);
+
+-- Table: employee_salary
+CREATE TABLE employee_salary (
+    employee_id INT,
+    department_id INT,
+    salary DECIMAL(10, 2)
+);
+
+-- Table: monthly_sales
+CREATE TABLE monthly_sales (
+    year INT,
+    month INT,
+    total_sales DECIMAL(10, 2),
+    region VARCHAR(50)
+);
+
+-- Table: employees
+CREATE TABLE employees (
+    employee_id INT,
+    department_id INT,
+    salary DECIMAL(10, 2)
+);
+
+-- Table: departments
+CREATE TABLE departments (
+    department_id INT,
+    department_name VARCHAR(50)
+);
+
+-- Insert sample data
+
+-- Insert data into sales
+INSERT INTO sales (product_id, date, revenue) VALUES
+(1, '2024-01-15', 5000),
+(1, '2024-02-20', 3000),
+(2, '2024-01-10', 7000),
+(2, '2024-03-05', 2000),
+(3, '2024-01-25', 4000),
+(3, '2024-02-10', 2500),
+(4, '2024-03-01', 6000),
+(5, '2024-01-30', 3500);
+
+-- Insert data into employee_salary
+INSERT INTO employee_salary (employee_id, department_id, salary) VALUES
+(1, 101, 60000),
+(2, 101, 65000),
+(3, 102, 50000),
+(4, 102, 55000),
+(5, 103, 45000),
+(6, 103, 47000),
+(7, 104, 70000),
+(8, 104, 72000);
+
+-- Insert data into monthly_sales
+INSERT INTO monthly_sales (year, month, total_sales, region) VALUES
+(2024, 1, 15000, 'North'),
+(2024, 1, 12000, 'South'),
+(2024, 2, 18000, 'North'),
+(2024, 2, 16000, 'South'),
+(2024, 3, 20000, 'North'),
+(2024, 3, 14000, 'South');
+
+-- Insert data into employees
+INSERT INTO employees (employee_id, department_id, salary) VALUES
+(1, 101, 60000),
+(2, 101, 65000),
+(3, 102, 50000),
+(4, 102, 55000),
+(5, 103, 45000),
+(6, 103, 47000),
+(7, 104, 70000),
+(8, 104, 72000);
+
+-- Insert data into departments
+INSERT INTO departments (department_id, department_name) VALUES
+(101, 'Sales'),
+(102, 'Marketing'),
+(103, 'HR'),
+(104, 'Finance');
+
+-- Execute queries
+
+-- Exercise 1
+-- Retrieve the top 5 products with the highest total revenue, sorted by total revenue and most recent sale date
 SELECT product_id,
        SUM(revenue) AS total_revenue,
        MAX(date) AS most_recent_sale_date
