@@ -1,0 +1,25 @@
+-- Create the table (if not already created)
+CREATE TABLE IF NOT EXISTS monthly_sales (
+    year INT,
+    month INT,
+    total_sales DECIMAL(10, 2),
+    region VARCHAR(50)
+);
+
+-- Insert sample data (if not already inserted)
+INSERT INTO monthly_sales (year, month, total_sales, region) VALUES
+(2024, 1, 15000, 'North'),
+(2024, 1, 12000, 'South'),
+(2024, 2, 18000, 'North'),
+(2024, 2, 16000, 'South'),
+(2024, 3, 20000, 'North'),
+(2024, 3, 14000, 'South');
+
+-- Query to compute the total sales for each region by year and month
+SELECT year,
+       month,
+       region,
+       SUM(total_sales) AS total_sales
+FROM monthly_sales
+GROUP BY year, month, region
+ORDER BY year ASC, month ASC, region ASC;
