@@ -1,24 +1,20 @@
--- Create the table (if not already created)
-CREATE TABLE IF NOT EXISTS employee_salary (
+-- Create the employee_salary table
+CREATE TABLE employee_salary (
     employee_id INT,
     department_id INT,
     salary DECIMAL(10, 2)
 );
 
--- Insert sample data (if not already inserted)
+-- Insert data into employee_salary table
 INSERT INTO employee_salary (employee_id, department_id, salary) VALUES
-(1, 101, 60000),
-(2, 101, 65000),
-(3, 102, 50000),
-(4, 102, 55000),
-(5, 103, 45000),
-(6, 103, 47000),
-(7, 104, 70000),
-(8, 104, 72000);
+(1, 1, 60000),
+(2, 1, 75000),
+(3, 2, 50000),
+(4, 2, 55000),
+(5, 3, 70000);
 
--- Query to calculate the average salary for each department
-SELECT department_id,
-       AVG(salary) AS average_salary
+-- Query to calculate average salary for each department
+SELECT department_id, AVG(salary) AS average_salary
 FROM employee_salary
 GROUP BY department_id
 ORDER BY average_salary DESC;
