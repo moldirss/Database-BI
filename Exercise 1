@@ -1,4 +1,3 @@
-C-- Create the table (if not already created)
 CREATE TABLE IF NOT EXISTS sales (
     product_id INT,
     date DATE,
