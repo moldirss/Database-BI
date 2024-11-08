@@ -1,0 +1,118 @@
+-- Drop tables if they already exist to avoid conflicts
+DROP TABLE IF EXISTS employee_projects;
+DROP TABLE IF EXISTS projects;
+DROP TABLE IF EXISTS employees;
+DROP TABLE IF EXISTS departments;
+
+-- Create the tables
+CREATE TABLE departments (
+    department_id INT PRIMARY KEY IDENTITY,
+    budget DECIMAL(15, 2)
+);
+
+CREATE TABLE employees (
+    employee_id INT PRIMARY KEY IDENTITY,
+    department_id INT FOREIGN KEY REFERENCES departments(department_id),
+    hourly_rate DECIMAL(10, 2)
+);
+
+CREATE TABLE projects (
+    project_id INT PRIMARY KEY IDENTITY,
+    department_id INT FOREIGN KEY REFERENCES departments(department_id),
+    total_hours_allocated INT
+);
+
+CREATE TABLE employee_projects (
+    employee_project_id INT PRIMARY KEY IDENTITY,
+    employee_id INT FOREIGN KEY REFERENCES employees(employee_id),
+    project_id INT FOREIGN KEY REFERENCES projects(project_id),
+    hours_worked INT
+);
+
+-- Insert sample data for departments
+INSERT INTO departments (budget) VALUES
+(5000.00),
+(10000.00),
+(8000.00);
+
+-- Insert sample data for employees
+INSERT INTO employees (department_id, hourly_rate) VALUES
+(1, 20.00),
+(2, 30.00),
+(3, 25.00),
+(1, 22.00);
+
+-- Insert sample data for projects
+INSERT INTO projects (department_id, total_hours_allocated) VALUES
+(1, 100),
+(2, 200),
+(3, 150);
+
+-- Insert sample data for employee_projects
+INSERT INTO employee_projects (employee_id, project_id, hours_worked) VALUES
+(1, 1, 60),
+(2, 2, 80),
+(3, 3, 90),
+(4, 1, 50);
+SELECT 
+    p.project_id,
+    p.department_id,
+    d.budget,
+    SUM(ep.hours_worked * e.hourly_rate) AS total_cost
+FROM 
+    projects AS p
+JOIN 
+    employee_projects AS ep ON p.project_id = ep.project_id
+JOIN 
+    employees AS e ON ep.employee_id = e.employee_id
+JOIN 
+    departments AS d ON p.department_id = d.department_id
+GROUP BY 
+    p.project_id, p.department_id, d.budget
+HAVING 
+    SUM(ep.hours_worked * e.hourly_rate) > d.budget;
+WITH WeeklyHours AS (
+    SELECT 
+        ep.employee_id,
+        DATEPART(WEEK, epw.work_date) AS week_number,
+        SUM(ep.hours_worked) AS weekly_hours
+    FROM 
+        employee_projects AS ep
+    JOIN 
+        (SELECT DISTINCT DATEADD(DAY, -(ROW_NUMBER() OVER (ORDER BY (SELECT NULL)) * 7), GETDATE()) AS work_date 
+         FROM master.dbo.spt_values 
+         WHERE TYPE = 'P' AND number BETWEEN 1 AND 4) AS epw ON 1=1
+    GROUP BY 
+        ep.employee_id, DATEPART(WEEK, epw.work_date)
+)
+SELECT 
+    employee_id
+FROM 
+    WeeklyHours
+GROUP BY 
+    employee_id
+HAVING 
+    AVG(weekly_hours) > 40;
+SELECT 
+    d.department_id,
+    DATEPART(YEAR, epw.work_date) AS year,
+    DATEPART(QUARTER, epw.work_date) AS quarter,
+    SUM(ep.hours_worked * e.hourly_rate) AS total_cost,
+    d.budget
+FROM 
+    employee_projects AS ep
+JOIN 
+    employees AS e ON ep.employee_id = e.employee_id
+JOIN 
+    departments AS d ON e.department_id = d.department_id
+JOIN 
+    (SELECT DISTINCT DATEADD(DAY, -(ROW_NUMBER() OVER (ORDER BY (SELECT NULL)) * 90), GETDATE()) AS work_date 
+     FROM master.dbo.spt_values 
+     WHERE TYPE = 'P' AND number BETWEEN 1 AND 4) AS epw ON 1=1
+GROUP BY 
+    d.department_id,
+    DATEPART(YEAR, epw.work_date),
+    DATEPART(QUARTER, epw.work_date),
+    d.budget
+HAVING 
+    SUM(ep.hours_worked * e.hourly_rate) > d.budget;
