@@ -1,0 +1,140 @@
+-- Step 1: Drop tables if they already exist to avoid conflicts
+DROP TABLE IF EXISTS order_items;
+DROP TABLE IF EXISTS orders;
+DROP TABLE IF EXISTS products;
+DROP TABLE IF EXISTS customers;
+
+-- Step 2: Create the tables
+CREATE TABLE customers (
+    customer_id INT PRIMARY KEY IDENTITY,
+    city VARCHAR(50),
+    state VARCHAR(50)
+);
+
+CREATE TABLE products (
+    product_id INT PRIMARY KEY IDENTITY,
+    category VARCHAR(50),
+    price DECIMAL(10, 2),
+    stock_quantity INT
+);
+
+CREATE TABLE orders (
+    order_id INT PRIMARY KEY IDENTITY,
+    customer_id INT FOREIGN KEY REFERENCES customers(customer_id),
+    order_date DATETIME,
+    order_status VARCHAR(20) -- Added to handle "Completed" orders
+);
+
+CREATE TABLE order_items (
+    order_item_id INT PRIMARY KEY IDENTITY,
+    order_id INT FOREIGN KEY REFERENCES orders(order_id),
+    product_id INT FOREIGN KEY REFERENCES products(product_id),
+    quantity INT
+);
+
+-- Step 3: Insert sample data into each table
+-- Insert data into customers
+INSERT INTO customers (city, state) VALUES 
+('Almaty', 'Almaty Region'),
+('Nur-Sultan', 'Akmola Region'),
+('Shymkent', 'South Kazakhstan'),
+('Aktau', 'Mangystau Region');
+
+-- Insert data into products
+INSERT INTO products (category, price, stock_quantity) VALUES 
+('Electronics', 299.99, 100),
+('Furniture', 149.99, 50),
+('Clothing', 49.99, 200),
+('Groceries', 9.99, 500);
+
+-- Insert data into orders
+INSERT INTO orders (customer_id, order_date, order_status) VALUES 
+(1, '2024-11-01 10:00:00', 'Completed'),
+(2, '2024-11-02 12:00:00', 'Completed'),
+(3, '2024-11-03 15:00:00', 'Completed'),
+(4, '2024-11-04 18:00:00', 'Pending');
+
+-- Insert data into order_items
+INSERT INTO order_items (order_id, product_id, quantity) VALUES 
+(1, 1, 2),
+(1, 2, 1),
+(2, 1, 1),
+(2, 3, 3),
+(3, 4, 10),
+(4, 2, 2); -- This is a "Pending" order and should not be included in the analysis
+
+-- Step 4: Query 1 - Revenue Analysis by Category and State
+SELECT 
+    p.category,
+    c.state,
+    SUM(oi.quantity * p.price) AS total_revenue
+FROM 
+    customers AS c
+JOIN 
+    orders AS o ON c.customer_id = o.customer_id
+JOIN 
+    order_items AS oi ON o.order_id = oi.order_id
+JOIN 
+    products AS p ON oi.product_id = p.product_id
+WHERE 
+    o.order_status = 'Completed'
+GROUP BY 
+    p.category, c.state
+ORDER BY 
+    p.category, c.state;
+
+-- Step 5: Query 2 - Top Customer by Category
+WITH customer_spend AS (
+    SELECT 
+        c.customer_id,
+        p.category,
+        SUM(oi.quantity * p.price) AS total_spend
+    FROM 
+        customers AS c
+    JOIN 
+        orders AS o ON c.customer_id = o.customer_id
+    JOIN 
+        order_items AS oi ON o.order_id = oi.order_id
+    JOIN 
+        products AS p ON oi.product_id = p.product_id
+    WHERE 
+        o.order_status = 'Completed'
+    GROUP BY 
+        c.customer_id, p.category
+)
+SELECT 
+    customer_id,
+    category,
+    total_spend
+FROM (
+    SELECT 
+        customer_id,
+        category,
+        total_spend,
+        RANK() OVER (PARTITION BY category ORDER BY total_spend DESC) AS rank
+    FROM 
+        customer_spend
+) AS ranked_spend
+WHERE 
+    rank = 1;
+
+-- Step 6: Query 3 - Rolling 7-Day Average Order Size
+-- Using ROWS BETWEEN 6 PRECEDING AND CURRENT ROW for a 7-day rolling average
+SELECT 
+    p.product_id,
+    o.order_date,
+    AVG(oi.quantity * 1.0) OVER (
+        PARTITION BY oi.product_id
+        ORDER BY o.order_date
+        ROWS BETWEEN 6 PRECEDING AND CURRENT ROW
+    ) AS rolling_avg_quantity
+FROM 
+    order_items AS oi
+JOIN 
+    orders AS o ON oi.order_id = o.order_id
+JOIN 
+    products AS p ON oi.product_id = p.product_id
+WHERE 
+    o.order_status = 'Completed'
+ORDER BY 
+    p.product_id, o.order_date;
