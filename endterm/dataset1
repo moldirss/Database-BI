@@ -1,0 +1,64 @@
+CREATE TABLE SupermarketSales (
+    InvoiceID VARCHAR(12),
+    Branch VARCHAR(1),
+    City VARCHAR(50),
+    CustomerType VARCHAR(20),
+    Gender VARCHAR(10),
+    ProductLine VARCHAR(50),
+    UnitPrice DECIMAL(10, 2),
+    Quantity INT,
+    Total DECIMAL(10, 2),
+    Date DATE
+);
+
+INSERT INTO SupermarketSales VALUES
+('842-75-7234', 'B', 'Mandalay', 'Normal', 'Male', 'Fashion accessories', 65.82, 8, 526.56, '2019-02-01'),
+('137-60-9207', 'A', 'Yangon', 'Member', 'Female', 'Sports and travel', 25.43, 2, 50.86, '2019-03-19'),
+('220-10-5331', 'C', 'Naypyitaw', 'Normal', 'Male', 'Food and beverages', 8.65, 9, 77.85, '2019-02-15'),
+('560-12-9464', 'B', 'Mandalay', 'Member', 'Female', 'Electronic accessories', 32.57, 6, 195.42, '2019-04-12'),
+('333-33-3983', 'A', 'Yangon', 'Normal', 'Male', 'Health and beauty', 18.99, 4, 75.96, '2019-02-27'),
+('456-78-5342', 'C', 'Naypyitaw', 'Member', 'Female', 'Fashion accessories', 48.37, 7, 338.59, '2019-01-18'),
+('170-98-1408', 'B', 'Mandalay', 'Normal', 'Male', 'Food and beverages', 12.76, 3, 38.28, '2019-03-30'),
+('964-10-9394', 'A', 'Yangon', 'Member', 'Female', 'Health and beauty', 45.12, 5, 225.6, '2019-01-20'),
+('777-99-1534', 'C', 'Naypyitaw', 'Normal', 'Male', 'Fashion accessories', 55.67, 10, 556.7, '2019-04-03'),
+('558-17-2044', 'B', 'Mandalay', 'Member', 'Female', 'Food and beverages', 23.45, 2, 46.9, '2019-02-25'),
+('673-02-6624', 'A', 'Yangon', 'Normal', 'Male', 'Electronic accessories', 89.37, 4, 357.48, '2019-01-08'),
+('129-64-5703', 'C', 'Naypyitaw', 'Member', 'Female', 'Sports and travel', 19.89, 3, 59.67, '2019-03-01'),
+('443-73-1145', 'B', 'Mandalay', 'Normal', 'Male', 'Fashion accessories', 75.13, 6, 450.78, '2019-02-19'),
+('101-58-6458', 'A', 'Yangon', 'Member', 'Female', 'Health and beauty', 21.57, 8, 172.56, '2019-04-07'),
+('252-17-4561', 'C', 'Naypyitaw', 'Normal', 'Male', 'Food and beverages', 10.45, 7, 73.15, '2019-01-11'),
+('821-21-2373', 'B', 'Mandalay', 'Member', 'Female', 'Sports and travel', 50.63, 3, 151.89, '2019-03-21'),
+('392-58-4702', 'A', 'Yangon', 'Normal', 'Male', 'Electronic accessories', 32.14, 5, 160.7, '2019-02-03'),
+('134-61-8071', 'C', 'Naypyitaw', 'Member', 'Female', 'Health and beauty', 14.99, 9, 134.91, '2019-03-10'),
+('527-71-3761', 'B', 'Mandalay', 'Normal', 'Male', 'Fashion accessories', 35.47, 8, 283.76, '2019-04-15'),
+('609-12-5458', 'A', 'Yangon', 'Member', 'Female', 'Food and beverages', 18.56, 6, 111.36, '2019-01-29'),
+('856-97-5842', 'C', 'Naypyitaw', 'Normal', 'Male', 'Sports and travel', 28.19, 7, 197.33, '2019-03-05'),
+('437-44-3318', 'B', 'Mandalay', 'Member', 'Female', 'Electronic accessories', 46.78, 10, 467.8, '2019-02-11'),
+('216-53-3319', 'A', 'Yangon', 'Normal', 'Male', 'Fashion accessories', 65.32, 2, 130.64, '2019-03-14'),
+('777-88-7784', 'C', 'Naypyitaw', 'Member', 'Female', 'Health and beauty', 21.43, 5, 107.15, '2019-01-06'),
+('242-88-5529', 'B', 'Mandalay', 'Normal', 'Male', 'Food and beverages', 9.99, 6, 59.94, '2019-02-17'),
+('548-44-3001', 'A', 'Yangon', 'Member', 'Female', 'Sports and travel', 35.68, 3, 107.04, '2019-04-09'),
+('132-12-5345', 'C', 'Naypyitaw', 'Normal', 'Male', 'Electronic accessories', 22.78, 4, 91.12, '2019-01-13'),
+('998-11-2334', 'B', 'Mandalay', 'Member', 'Female', 'Health and beauty', 18.12, 2, 36.24, '2019-02-28'),
+('314-75-6523', 'A', 'Yangon', 'Normal', 'Male', 'Fashion accessories', 48.76, 8, 390.08, '2019-03-27'),
+('712-34-5932', 'C', 'Naypyitaw', 'Member', 'Female', 'Food and beverages', 16.45, 9, 148.05, '2019-01-21');
+--Total sales by branch:
+SELECT Branch, SUM(Total) AS TotalSales
+FROM SupermarketSales
+GROUP BY Branch;
+--Average sales per product line:
+SELECT ProductLine, AVG(Total) AS AvgSales
+FROM SupermarketSales
+GROUP BY ProductLine;
+--Gender-based sales comparison:
+SELECT Gender, SUM(Total) AS TotalSales
+FROM SupermarketSales
+GROUP BY Gender;
+--Highest sales by a single transaction:
+SELECT MAX(Total) AS HighestSales
+FROM SupermarketSales;
+--Sales trends over months:
+SELECT MONTH(Date) AS Month, SUM(Total) AS MonthlySales
+FROM SupermarketSales
+GROUP BY MONTH(Date);
+
