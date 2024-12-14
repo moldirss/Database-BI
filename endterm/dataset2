@@ -40,27 +40,27 @@ INSERT INTO Movies VALUES
 (30, 'The Prestige', 'Mystery', 8.5, 1246789, 2006),
 (31, 'The Departed', 'Crime', 8.5, 1345678, 2006);
 
---Average rating by genre:
+--Этот запрос вернет средний рейтинг для каждого жанра
 SELECT Genre, AVG(Rating) AS AvgRating
 FROM Movies
 GROUP BY Genre;
 
---Top 5 highest-rated movies:
+--Этот запрос вернет 5 фильмов с наивысшим рейтингом
 SELECT TOP 5 Title, Rating
 FROM Movies
 ORDER BY Rating DESC;
 
---Total votes by release year:
+--Этот запрос покажет общее количество голосов для фильмов, сгруппированных по годам выпуска
 SELECT ReleaseYear, SUM(Votes) AS TotalVotes
 FROM Movies
 GROUP BY ReleaseYear;
---Genre with the highest average rating:
+--Жанр с наивысшим средним рейтингом
 SELECT TOP 1 Genre, AVG(Rating) AS AvgRating
 FROM Movies
 GROUP BY Genre
 ORDER BY AvgRating DESC;
 
---Distribution of movies by genre:
+--Этот запрос покажет количество фильмов для каждого жанра
 SELECT Genre, COUNT(*) AS MovieCount
 FROM Movies
 GROUP BY Genre;
