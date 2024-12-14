@@ -42,22 +42,22 @@ INSERT INTO SupermarketSales VALUES
 ('998-11-2334', 'B', 'Mandalay', 'Member', 'Female', 'Health and beauty', 18.12, 2, 36.24, '2019-02-28'),
 ('314-75-6523', 'A', 'Yangon', 'Normal', 'Male', 'Fashion accessories', 48.76, 8, 390.08, '2019-03-27'),
 ('712-34-5932', 'C', 'Naypyitaw', 'Member', 'Female', 'Food and beverages', 16.45, 9, 148.05, '2019-01-21');
---Total sales by branch:
+--Этот запрос покажет общие продажи для каждого филиала
 SELECT Branch, SUM(Total) AS TotalSales
 FROM SupermarketSales
 GROUP BY Branch;
---Average sales per product line:
+--Этот запрос покажет средние продажи по каждой товарной категории
 SELECT ProductLine, AVG(Total) AS AvgSales
 FROM SupermarketSales
 GROUP BY ProductLine;
---Gender-based sales comparison:
+--Этот запрос покажет общие продажи по полу
 SELECT Gender, SUM(Total) AS TotalSales
 FROM SupermarketSales
 GROUP BY Gender;
---Highest sales by a single transaction:
+--Этот запрос вернет наибольшую сумму из столбца Total для одной транзакции
 SELECT MAX(Total) AS HighestSales
 FROM SupermarketSales;
---Sales trends over months:
+--Этот запрос покажет общие продажи для каждого месяца
 SELECT MONTH(Date) AS Month, SUM(Total) AS MonthlySales
 FROM SupermarketSales
 GROUP BY MONTH(Date);
