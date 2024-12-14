@@ -1,0 +1,66 @@
+CREATE TABLE Movies (
+    MovieID INT PRIMARY KEY,
+    Title VARCHAR(255),
+    Genre VARCHAR(50),
+    Rating DECIMAL(3, 1),
+    Votes INT,
+    ReleaseYear INT
+);
+
+INSERT INTO Movies VALUES
+(1, 'The Shawshank Redemption', 'Drama', 9.3, 2343110, 1994),
+(2, 'The Godfather', 'Crime', 9.2, 1620367, 1972),
+(3, 'The Dark Knight', 'Action', 9.0, 2501234, 2008),
+(4, 'The Godfather: Part II', 'Crime', 9.0, 1135748, 1974),
+(5, '12 Angry Men', 'Drama', 9.0, 780567, 1957),
+(6, 'Schindler''s List', 'Biography', 8.9, 1357602, 1993),
+(7, 'The Lord of the Rings: The Return of the King', 'Adventure', 9.0, 1923748, 2003),
+(8, 'Pulp Fiction', 'Crime', 8.9, 1984723, 1994),
+(9, 'The Good, the Bad and the Ugly', 'Western', 8.8, 731245, 1966),
+(10, 'Fight Club', 'Drama', 8.8, 2023451, 1999),
+(11, 'Forrest Gump', 'Drama', 8.8, 2039481, 1994),
+(12, 'Inception', 'Sci-Fi', 8.7, 2341234, 2010),
+(13, 'The Matrix', 'Sci-Fi', 8.7, 1802345, 1999),
+(14, 'Goodfellas', 'Crime', 8.7, 1161235, 1990),
+(15, 'The Lord of the Rings: The Fellowship of the Ring', 'Adventure', 8.8, 1893452, 2001),
+(16, 'Star Wars: Episode V - The Empire Strikes Back', 'Action', 8.7, 1253123, 1980),
+(17, 'Seven Samurai', 'Adventure', 8.6, 355467, 1954),
+(18, 'Se7en', 'Crime', 8.6, 1541237, 1995),
+(19, 'The Silence of the Lambs', 'Thriller', 8.6, 1391247, 1991),
+(20, 'City of God', 'Crime', 8.6, 720345, 2002),
+(21, 'Saving Private Ryan', 'Drama', 8.6, 1361278, 1998),
+(22, 'The Green Mile', 'Drama', 8.6, 1324567, 1999),
+(23, 'Interstellar', 'Sci-Fi', 8.6, 1748932, 2014),
+(24, 'Parasite', 'Thriller', 8.5, 935478, 2019),
+(25, 'Spirited Away', 'Animation', 8.6, 765423, 2001),
+(26, 'The Lion King', 'Animation', 8.5, 1024567, 1994),
+(27, 'The Usual Suspects', 'Crime', 8.5, 1087456, 1995),
+(28, 'Whiplash', 'Drama', 8.5, 845123, 2014),
+(29, 'Gladiator', 'Action', 8.5, 1345678, 2000),
+(30, 'The Prestige', 'Mystery', 8.5, 1246789, 2006),
+(31, 'The Departed', 'Crime', 8.5, 1345678, 2006);
+
+--Average rating by genre:
+SELECT Genre, AVG(Rating) AS AvgRating
+FROM Movies
+GROUP BY Genre;
+
+--Top 5 highest-rated movies:
+SELECT TOP 5 Title, Rating
+FROM Movies
+ORDER BY Rating DESC;
+
+--Total votes by release year:
+SELECT ReleaseYear, SUM(Votes) AS TotalVotes
+FROM Movies
+GROUP BY ReleaseYear;
+--Genre with the highest average rating:
+SELECT TOP 1 Genre, AVG(Rating) AS AvgRating
+FROM Movies
+GROUP BY Genre
+ORDER BY AvgRating DESC;
+
+--Distribution of movies by genre:
+SELECT Genre, COUNT(*) AS MovieCount
+FROM Movies
+GROUP BY Genre;
